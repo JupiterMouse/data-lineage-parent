@@ -1,0 +1,101 @@
+package cn.jupitermouse.lineage.graph.service.impl;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Service;
+
+import cn.jupitermouse.lineage.graph.constats.NeoConstant;
+import cn.jupitermouse.lineage.graph.entity.ColumnEntity;
+import cn.jupitermouse.lineage.graph.entity.TableEntity;
+import cn.jupitermouse.lineage.graph.repository.ColumnRepository;
+import cn.jupitermouse.lineage.graph.repository.TableRepository;
+import cn.jupitermouse.lineage.graph.service.LineageElementService;
+import cn.jupitermouse.lineage.parser.durid.analyse.LineageAnalyzer;
+import cn.jupitermouse.lineage.parser.durid.dto.LineageColumnDTO;
+import cn.jupitermouse.lineage.parser.model.ColumnNode;
+import cn.jupitermouse.lineage.parser.model.TableNode;
+import cn.jupitermouse.lineage.parser.model.TreeNode;
+
+import static cn.jupitermouse.lineage.graph.constats.NeoConstant.*;
+
+/**
+ * <p>
+ * 血缘关系写入图数据库
+ * </p>
+ *
+ * @author JupiterMouse 2020/09/09
+ * @since 1.0
+ */
+@Service
+public class LineageElementServiceImpl implements LineageElementService {
+
+    private final TableRepository tableRepository;
+
+    private final ColumnRepository columnRepository;
+
+    public LineageElementServiceImpl(TableRepository tableRepository, ColumnRepository columnRepository) {
+        this.tableRepository = tableRepository;
+        this.columnRepository = columnRepository;
+    }
+
+    @Override
+    public void IngestTableLineage(String sql, String dbType) {
+        LineageAnalyzer lineageAnalyzer = new LineageAnalyzer();
+        TreeNode<TableNode> root = lineageAnalyzer.lineageTreeAnalyzer(sql, dbType);
+        List<TableNode> sourceTableNodeList = new ArrayList<>();
+        lineageAnalyzer.traverseTableLineageTree(root, sourceTableNodeList);
+        // 构建写入图的对象
+        List<TableEntity> fromTableEntityList = sourceTableNodeList.stream().map(this::transform2TableEntity)
+                .collect(Collectors.toList());
+        TableEntity rootTableEntity = this.transform2TableEntity(root.getValue());
+        rootTableEntity.setFromTables(fromTableEntityList);
+        // TODO 这里后续考虑构建时 Table Column 先建立好
+        TableEntity save = tableRepository.save(rootTableEntity);
+        System.out.println();
+    }
+
+    @Override
+    public void IngestColumnLineage(String sql, String dbType) {
+        LineageAnalyzer lineageAnalyzer = new LineageAnalyzer();
+        List<LineageColumnDTO> lineageColumnDTOList = lineageAnalyzer.columnLineageAnalyzer(sql, dbType);
+        List<ColumnEntity> resultColumnEntityList = new ArrayList<>();
+        for (LineageColumnDTO lineageColumnDTO : lineageColumnDTOList) {
+            ColumnEntity rootColumnEntity = this.transform2ColumnEntity(lineageColumnDTO.getColumn());
+            List<ColumnEntity> sourceColumnEntityList = lineageColumnDTO.getSourceColumnList().stream()
+                    .map(this::transform2ColumnEntity).collect(Collectors.toList());
+            rootColumnEntity.setColumnSource(sourceColumnEntityList);
+            resultColumnEntityList.add(rootColumnEntity);
+        }
+        columnRepository.saveAll(resultColumnEntityList);
+    }
+
+    private TableEntity transform2TableEntity(TableNode table) {
+        return TableEntity.builder()
+                .id(this.getTableIndex(table))
+                .name(table.getName())
+                .build();
+    }
+
+    private ColumnEntity transform2ColumnEntity(ColumnNode column) {
+        return ColumnEntity.builder()
+                .id(this.getColumnIndex(column))
+                .name(column.getName())
+                .tableName(column.getOwner().getName())
+                .build();
+
+    }
+
+    private String getTableIndex(TableNode table) {
+        return String
+                .format(FT_TABLE_INDEX, DEFAULT_BUSINESS_CODE, DEFAULT_DB_NAME, DEFAULT_DB_SCHEMA, table.getName());
+    }
+
+    private String getColumnIndex(ColumnNode column) {
+        return String.format(NeoConstant.FT_COLUMN_INDEX, DEFAULT_BUSINESS_CODE, DEFAULT_DB_NAME, DEFAULT_DB_SCHEMA,
+                column.getOwner().getName(), column.getName());
+    }
+
+
+}
