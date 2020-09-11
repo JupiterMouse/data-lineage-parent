@@ -2,6 +2,7 @@ package cn.jupitermouse.lineage.parser.durid.handler;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
+import cn.jupitermouse.lineage.parser.durid.process.ProcessorRegister;
 import cn.jupitermouse.lineage.parser.model.TableNode;
 import cn.jupitermouse.lineage.parser.model.TreeNode;
 import com.alibaba.druid.sql.SQLUtils;
@@ -31,6 +32,19 @@ public class SqlTreeHandler {
      * @return
      */
     public TreeNode<TableNode> constructLineageTree(String sql, String dbType) {
+        // 生成初始序列
+        AtomicInteger sequence = new AtomicInteger();
+        // 构建根节点血缘树
+        TreeNode<TableNode> root = new TreeNode<>();
+        // 解析SQL后生成的statement
+        SQLStatement statement = SQLUtils.parseSingleStatement(sql, dbType);
+        // 查询树
+        ProcessorRegister.getStatementProcessor(statement.getClass())
+                .process(statement, root, dbType);
+        return root;
+    }
+
+    public TreeNode<TableNode> constructLineageTree2(String sql, String dbType) {
         // 生成初始序列
         AtomicInteger sequence = new AtomicInteger();
         // 构建根节点血缘树
@@ -78,8 +92,11 @@ public class SqlTreeHandler {
                     .name(tableName)
                     .build();
             root.setValue(tableNode);
+            try{
+                tableNode.setExpression(SQLUtils.toSQLString(statement));
+            }catch (Exception e){
 
-            tableNode.setExpression(SQLUtils.toSQLString(statement));
+            }
             tableNode.setIsVirtualTemp(false);
         } else {
             throw new UnsupportedOperationException(statement.getClass().getName());

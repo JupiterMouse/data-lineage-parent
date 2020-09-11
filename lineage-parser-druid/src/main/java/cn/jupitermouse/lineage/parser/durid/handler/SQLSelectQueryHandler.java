@@ -205,8 +205,7 @@ public class SQLSelectQueryHandler {
             this.processTableSource(sequence, proxyNode, sqlJoinTableSource.getLeft(), dbType);
             this.processTableSource(sequence, proxyNode, sqlJoinTableSource.getRight(), dbType);
         } else if (sqlTableSource instanceof SQLSubqueryTableSource) {
-            this.processSQLSelectQuery(sequence, parent,
-                    ((SQLSubqueryTableSource) sqlTableSource).getSelect().getQuery(), dbType);
+            this.processSQLSelectQuery(sequence, parent, ((SQLSubqueryTableSource) sqlTableSource).getSelect().getQuery(), dbType);
         } else if (sqlTableSource instanceof SQLExprTableSource) {
             // 建立中介节点 start
             TableNode proxyTable = new TableNode();
