@@ -40,5 +40,4 @@ public class TableEntity {
      */
     @Relationship(type = "TABLE_FROM_TABLE", direction = Relationship.DIRECTION)
     private List<TableEntity> fromTables;
-
 }

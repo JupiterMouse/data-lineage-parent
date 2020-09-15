@@ -62,6 +62,7 @@ public class TreeNode<T> {
         }
         return childList.size() == 0;
     }
+
     public boolean isOneChildAndLeaf() {
         return childList != null && childList.size() == 1 && childList.get(0).isLeaf();
     }
@@ -98,6 +99,13 @@ public class TreeNode<T> {
     public TreeNode<T> getParent() {
         return parent;
     }
+
+    public static <T> TreeNode<T> of(T data) {
+        TreeNode<T> treeNode = new TreeNode<>();
+        treeNode.setValue(data);
+        return treeNode;
+    }
+
 }
 
 

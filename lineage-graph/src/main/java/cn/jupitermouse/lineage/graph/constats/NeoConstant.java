@@ -8,22 +8,25 @@ package cn.jupitermouse.lineage.graph.constats;
  * @author JupiterMouse 2020/09/09
  * @since 1.0
  */
-public interface NeoConstant {
+public class NeoConstant {
+
+    private NeoConstant() {
+    }
 
     /**
      * /{业务代码}/{database}/{schema}/{table}
      */
-    String FT_TABLE_INDEX = "/%s/%s/%s/%s";
+    public static final String FT_TABLE_INDEX = "/%s/%s/%s/%s";
 
     /**
      * /{业务代码}/{database}/{schema}/{table}/{column}
      */
-    String FT_COLUMN_INDEX = "/%s/%s/%s/%s/%s";
+    public static final String FT_COLUMN_INDEX = "/%s/%s/%s/%s/%s";
 
-    String DEFAULT_BUSINESS_CODE = "default";
+    public static final String DEFAULT_BUSINESS_CODE = "default";
 
-    String DEFAULT_DB_NAME = "db";
+    public static final String DEFAULT_DB_NAME = "db";
 
-    String DEFAULT_DB_SCHEMA = "schema";
+    public static final String DEFAULT_DB_SCHEMA = "schema";
 
 }

@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
+import cn.jupitermouse.lineage.common.message.SqlRequestDTO;
 import cn.jupitermouse.lineage.graph.constats.NeoConstant;
 import cn.jupitermouse.lineage.graph.entity.ColumnEntity;
 import cn.jupitermouse.lineage.graph.entity.TableEntity;
@@ -41,9 +42,10 @@ public class LineageElementServiceImpl implements LineageElementService {
     }
 
     @Override
-    public void IngestTableLineage(String sql, String dbType) {
+    public void ingestTableLineage(String dbType, String sql) {
         LineageAnalyzer lineageAnalyzer = new LineageAnalyzer();
-        TreeNode<TableNode> root = lineageAnalyzer.lineageTreeAnalyzer(sql, dbType);
+        TreeNode<TableNode> root = lineageAnalyzer
+                .getLineageTree(SqlRequestDTO.builder().dbType(dbType).sql(sql).build());
         List<TableNode> sourceTableNodeList = new ArrayList<>();
         lineageAnalyzer.traverseTableLineageTree(root, sourceTableNodeList);
         // 构建写入图的对象
@@ -51,15 +53,14 @@ public class LineageElementServiceImpl implements LineageElementService {
                 .collect(Collectors.toList());
         TableEntity rootTableEntity = this.transform2TableEntity(root.getValue());
         rootTableEntity.setFromTables(fromTableEntityList);
-        // TODO 这里后续考虑构建时 Table Column 先建立好
-        TableEntity save = tableRepository.save(rootTableEntity);
-        System.out.println();
+        tableRepository.save(rootTableEntity);
     }
 
     @Override
-    public void IngestColumnLineage(String sql, String dbType) {
+    public void ingestColumnLineage(String dbType, String sql) {
         LineageAnalyzer lineageAnalyzer = new LineageAnalyzer();
-        List<LineageColumnDTO> lineageColumnDTOList = lineageAnalyzer.columnLineageAnalyzer(sql, dbType);
+        List<LineageColumnDTO> lineageColumnDTOList = lineageAnalyzer
+                .getColumnLineage(SqlRequestDTO.builder().dbType(dbType).sql(sql).build());
         List<ColumnEntity> resultColumnEntityList = new ArrayList<>();
         for (LineageColumnDTO lineageColumnDTO : lineageColumnDTOList) {
             ColumnEntity rootColumnEntity = this.transform2ColumnEntity(lineageColumnDTO.getColumn());

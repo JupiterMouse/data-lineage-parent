@@ -16,7 +16,7 @@ public interface LineageElementService {
      * @param sql    执行的SQL
      * @param dbType 数据库
      */
-    void IngestTableLineage(String sql, String dbType);
+    void ingestTableLineage(String dbType, String sql);
 
     /**
      * 输入字段血缘到图
@@ -24,6 +24,6 @@ public interface LineageElementService {
      * @param sql    执行的SQL
      * @param dbType 数据库
      */
-    void IngestColumnLineage(String sql, String dbType);
+    void ingestColumnLineage(String dbType, String sql);
 
 }

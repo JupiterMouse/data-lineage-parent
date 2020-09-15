@@ -3,28 +3,28 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>cn.jupitermouse</groupId>
+  <parent>
+    <artifactId>data-lineage-parent</artifactId>
+    <groupId>cn.jupitermouse</groupId>
+    <version>0.0.1-SNAPSHOT</version>
+  </parent>
+
   <artifactId>lineage-parser-druid</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <name>${project.artifactId}</name>
+  <packaging>jar</packaging>
 
-  <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <maven.compiler.source>1.8</maven.compiler.source>
-    <maven.compiler.target>1.8</maven.compiler.target>
-    <java.version>1.8</java.version>
-
-    <spring-boot.version>2.3.0.RELEASE</spring-boot.version>
-
-    <druid.version>1.1.23</druid.version>
-    <lombok.version>1.18.12</lombok.version>
-    <commons-beanutils>1.9.4</commons-beanutils>
-  </properties>
 
   <dependencies>
     <dependency>
+      <groupId>cn.jupitermouse</groupId>
+      <artifactId>lineage-common</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-web</artifactId>
-      <version>${spring-boot.version}</version>
+      <scope>provided</scope>
     </dependency>
 
     <dependency>
@@ -47,9 +47,12 @@
     </dependency>
 
     <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+    </dependency>
+    <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.12</version>
       <scope>test</scope>
     </dependency>
 

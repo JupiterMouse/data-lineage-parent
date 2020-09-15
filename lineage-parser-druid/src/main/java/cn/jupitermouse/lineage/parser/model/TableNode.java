@@ -1,6 +1,5 @@
 package cn.jupitermouse.lineage.parser.model;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,10 +20,10 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class TableNode implements Cloneable, Serializable {
+public class TableNode {
 
     /**
-     * schema
+     * SCHEMA
      */
     private String schemaName;
     /**

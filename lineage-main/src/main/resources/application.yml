@@ -1,10 +1,36 @@
 server:
-  port: 20200
+  port: 20909
+  servlet:
+    context-path: /lineage
 spring:
   application:
     name: data-lineage
+
   data:
     neo4j:
       username: neo4j
       password: 123456 # 如果没有修改，默认密码为 neo4j
-      uri: bolt://127.0.0.1:7687 # BOLT IP
+      uri: bolt://172.23.16.68:7687 # BOLT IPhttp://172.23.16.68:7474/
+
+  kafka:
+    bootstrap-servers: 10.211.55.2:9092
+    producer:
+      retries: 0
+      batch-size: 16384
+      buffer-memory: 33554432
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+    consumer:
+      group-id: sql-parser-group
+      # 手动提交
+      enable-auto-commit: false
+      auto-offset-reset: latest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      properties:
+        session.timeout.ms: 60000
+    listener:
+      log-container-config: false
+      concurrency: 5
+      # 手动提交
+      ack-mode: manual_immediate
