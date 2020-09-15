@@ -1,6 +1,5 @@
 package cn.jupitermouse.lineage.parser.model;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,7 +20,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ColumnNode implements Cloneable, Serializable {
+public class ColumnNode {
 
     /**
      * 列所属的表，考虑
@@ -47,4 +46,9 @@ public class ColumnNode implements Cloneable, Serializable {
      * 此节点表达式
      */
     private String expression;
+
+    /**
+     * 字段所在的表树Id
+     */
+    private Long tableTreeNodeId;
 }

@@ -2,81 +2,90 @@ package cn.jupitermouse.lineage.parser.durid.analyse;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.util.CollectionUtils;
 
 import cn.jupitermouse.lineage.parser.durid.dto.LineageColumnDTO;
-import cn.jupitermouse.lineage.parser.durid.handler.ColumnLineageTracer;
-import cn.jupitermouse.lineage.parser.durid.handler.SqlTreeHandler;
+import cn.jupitermouse.lineage.parser.durid.dto.SqlRequestDTO;
+import cn.jupitermouse.lineage.parser.durid.process.ProcessorRegister;
+import cn.jupitermouse.lineage.parser.durid.tracer.ColumnLineageTracer;
 import cn.jupitermouse.lineage.parser.model.ColumnNode;
 import cn.jupitermouse.lineage.parser.model.TableNode;
 import cn.jupitermouse.lineage.parser.model.TreeNode;
+import com.alibaba.druid.sql.SQLUtils;
+import com.alibaba.druid.sql.ast.SQLStatement;
 
 /**
  * <p>
- * 血缘分析主函数
+ * 血缘分析
  * </p>
  *
- * @author JupiterMouse 2020/09/09
+ * @author JupiterMouse 2020/09/15
  * @since 1.0
  */
 public class LineageAnalyzer {
 
-    public TreeNode<TableNode> lineageTreeAnalyzer(String sql, String dbType) {
-        return new SqlTreeHandler().constructLineageTree(sql, dbType);
+    /**
+     * 返回原始的血缘树
+     *
+     * @param dto SqlRequestDTO
+     * @return TreeNode<TableNode>
+     */
+    public TreeNode<TableNode> getLineageTree(SqlRequestDTO dto) {
+        // 构建血缘树
+        // 生成初始序列
+        AtomicInteger sequence = new AtomicInteger();
+        // 构建根节点血缘树
+        TreeNode<TableNode> root = new TreeNode<>();
+        // 解析SQL后生成的statement
+        SQLStatement statement = SQLUtils.parseSingleStatement(dto.getSql(), dto.getDbType());
+        // 查询树
+        ProcessorRegister.getStatementProcessor(statement.getClass())
+                .process(dto.getDbType(), sequence, root, statement);
+        // TODO 字段清洗 && 缺失字段补全 && 字段最可能来源的表
+        return root;
     }
 
     /**
-     * 原生的字段血缘树
+     * 返回原始的字段血缘树
      *
-     * @param sql    SQL
-     * @param dbType 数据库类型
+     * @param dto SqlRequestDTO
      * @return List<TreeNode < ColumnNode>>
      */
-    public List<TreeNode<ColumnNode>> originColumnLineageTreeAnalyzer(String sql, String dbType) {
-        // 数据血缘SQL 解析生成字段级别血缘
-        ColumnLineageTracer columnLineageTracer = new ColumnLineageTracer();
+    public List<TreeNode<ColumnNode>> getColumnLineageTree(SqlRequestDTO dto) {
         // 生成血缘树
-        TreeNode<TableNode> root = this.lineageTreeAnalyzer(sql, dbType);
+        TreeNode<TableNode> root = this.getLineageTree(dto);
+        //
+        TableNode rootValue = root.getValue();
+        TableNode tempNode = new TableNode();
+        BeanUtils.copyProperties(rootValue, tempNode, "columns");
         // 第一个有字段的节点的所有字段的来源
         TreeNode<TableNode> firstHaveColumnTableNode = this.findFirstHaveColumnTableNode(root);
         List<ColumnNode> lineageColumnList = firstHaveColumnTableNode.getValue().getColumns();
         List<TreeNode<ColumnNode>> lineageColumnTreeList = new ArrayList<>();
-
+        // TODO REMOVE NEW
+        ColumnLineageTracer columnLineageTracer = new ColumnLineageTracer();
         lineageColumnList.forEach(lineageColumn -> {
             TreeNode<ColumnNode> node = new TreeNode<>();
             node.setValue(lineageColumn);
+            // TODO 暂时 第一个有字段的节点，表名更新为最顶级表名
+            lineageColumn.setOwner(tempNode);
             lineageColumnTreeList.add(node);
-            columnLineageTracer.traceabilityFieldSource(node, firstHaveColumnTableNode, dbType);
+            columnLineageTracer.traceColumnLineageTree(dto.getDbType(), node, firstHaveColumnTableNode);
         });
         return lineageColumnTreeList;
     }
 
     /**
-     * 封装的字段血缘 todo 考虑重建
+     * 获取血缘字段的来源列表
      *
-     * @param sql    sql
-     * @param dbType dbType
+     * @param dto SqlRequestDTO
      * @return List<LineageColumnDTO>
      */
-    public List<LineageColumnDTO> columnLineageAnalyzer(String sql, String dbType) {
-        // 数据血缘SQL 解析生成字段级别血缘
-        ColumnLineageTracer columnLineageTracer = new ColumnLineageTracer();
-        // 生成血缘树
-        TreeNode<TableNode> root = this.lineageTreeAnalyzer(sql, dbType);
-        // 第一个有字段的节点的所有字段的来源
-        TreeNode<TableNode> firstHaveColumnTableNode = this.findFirstHaveColumnTableNode(root);
-        List<ColumnNode> lineageColumnList = firstHaveColumnTableNode.getValue().getColumns();
-        List<TreeNode<ColumnNode>> lineageColumnTreeList = new ArrayList<>();
-
-        lineageColumnList.forEach(lineageColumn -> {
-            TreeNode<ColumnNode> node = new TreeNode<>();
-            node.setValue(lineageColumn);
-            lineageColumnTreeList.add(node);
-            columnLineageTracer.traceabilityFieldSource(node, firstHaveColumnTableNode, dbType);
-        });
-
+    public List<LineageColumnDTO> getColumnLineage(SqlRequestDTO dto) {
+        List<TreeNode<ColumnNode>> lineageColumnTreeList = this.getColumnLineageTree(dto);
         // 处理 lineageColumnTree -> List<LineageColumnDTO>
         List<LineageColumnDTO> resultColumnDTOList = new ArrayList<>();
         for (TreeNode<ColumnNode> lineageColumnTree : lineageColumnTreeList) {
@@ -84,7 +93,7 @@ public class LineageAnalyzer {
             ColumnNode target = new ColumnNode();
             BeanUtils.copyProperties(columnNode, target, "owner", "sourceColumns");
             // 设为首级表
-            target.setOwner(root.getValue());
+            target.setOwner(columnNode.getOwner());
             LineageColumnDTO lineageColumnDTO = LineageColumnDTO.builder()
                     .column(target).build();
             List<ColumnNode> sourceTableList = new ArrayList<>();
@@ -93,6 +102,42 @@ public class LineageAnalyzer {
             resultColumnDTOList.add(lineageColumnDTO);
         }
         return resultColumnDTOList;
+    }
+
+    /**
+     * 获取血缘字段的来源列表
+     *
+     * @return List<LineageColumnDTO> lineageColumnTreeList
+     */
+    public List<LineageColumnDTO> getColumnLineage(List<TreeNode<ColumnNode>> lineageColumnTreeList) {
+        List<LineageColumnDTO> resultColumnDTOList = new ArrayList<>();
+        for (TreeNode<ColumnNode> lineageColumnTree : lineageColumnTreeList) {
+            ColumnNode columnNode = lineageColumnTree.getValue();
+            ColumnNode target = new ColumnNode();
+            BeanUtils.copyProperties(columnNode, target, "owner", "sourceColumns");
+            // 设为首级表
+            target.setOwner(columnNode.getOwner());
+            LineageColumnDTO lineageColumnDTO = LineageColumnDTO.builder()
+                    .column(target).build();
+            List<ColumnNode> sourceTableList = new ArrayList<>();
+            this.traverseTableLineageTree(lineageColumnTree, sourceTableList);
+            lineageColumnDTO.setSourceColumnList(sourceTableList);
+            resultColumnDTOList.add(lineageColumnDTO);
+        }
+        return resultColumnDTOList;
+    }
+
+    /**
+     * 获取TreeNode中来源的节点
+     *
+     * @param dto SqlRequestDTO
+     * @return TreeNode<TableNode>
+     */
+    public List<TableNode> getTableLineageList(SqlRequestDTO dto) {
+        TreeNode<TableNode> lineageTree = this.getLineageTree(dto);
+        List<TableNode> sourceTableNodeList = new ArrayList<>();
+        this.traverseTableLineageTree(lineageTree, sourceTableNodeList);
+        return sourceTableNodeList;
     }
 
     /**
@@ -125,5 +170,4 @@ public class LineageAnalyzer {
         // 第一个有字段的节点，其父级仅有一个子元素
         return root.getChildList().get(0);
     }
-
 }

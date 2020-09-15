@@ -1,10 +1,13 @@
 server:
-  port: 20200
+  port: 20909
+  servlet:
+    context-path: /lineage
 spring:
   application:
     name: data-lineage
+
   data:
     neo4j:
       username: neo4j
       password: 123456 # 如果没有修改，默认密码为 neo4j
-      uri: bolt://127.0.0.1:7687 # BOLT IP
+      uri: bolt://172.23.16.68:7687 # BOLT IPhttp://172.23.16.68:7474/
