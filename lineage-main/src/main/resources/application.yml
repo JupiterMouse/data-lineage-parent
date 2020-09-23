@@ -13,7 +13,7 @@ spring:
       uri: bolt://172.23.16.68:7687 # BOLT IPhttp://172.23.16.68:7474/
 
   kafka:
-    bootstrap-servers: 10.211.55.2:9092
+    bootstrap-servers: 10.37.129.2:9092
     producer:
       retries: 0
       batch-size: 16384
@@ -34,3 +34,15 @@ spring:
       concurrency: 5
       # 手动提交
       ack-mode: manual_immediate
+      missing-topics-fatal: false
+
+
+
+
+lineage:
+  datasource:
+    hand-hr-gp:
+      jdbc-url: jdbc:postgresql://192.168.17.153:5432/hr
+      username: hdsp
+      password: hdsp
+      driver-class-name: org.postgresql.Driver

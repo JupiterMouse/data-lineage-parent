@@ -28,6 +28,7 @@
     <knife4j.version>2.0.4</knife4j.version>
     <jackson.version>2.11.2</jackson.version>
     <junit.version>4.12</junit.version>
+    <postgresql.jdbc.version>42.2.6</postgresql.jdbc.version>
   </properties>
 
   <modules>
@@ -59,6 +60,17 @@
         <artifactId>spring-kafka</artifactId>
         <version>${spring-boot.version}</version>
         <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-jdbc</artifactId>
+        <version>${spring-boot.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-configuration-processor</artifactId>
+        <version>${spring-boot.version}</version>
+        <optional>true</optional>
       </dependency>
 
       <dependency>
@@ -115,6 +127,13 @@
         <groupId>com.github.xiaoymin</groupId>
         <artifactId>knife4j-spring-boot-starter</artifactId>
         <version>${knife4j.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.postgresql</groupId>
+        <artifactId>postgresql</artifactId>
+        <version>${postgresql.jdbc.version}</version>
+        <scope>provided</scope>
       </dependency>
 
       <dependency>

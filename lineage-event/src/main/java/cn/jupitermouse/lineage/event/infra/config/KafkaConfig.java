@@ -48,6 +48,7 @@ public class KafkaConfig {
         factory.setConsumerFactory(consumerFactory());
         factory.setConcurrency(DEFAULT_PARTITION_NUM);
         factory.setBatchListener(true);
+        factory.setMissingTopicsFatal(false);
         factory.getContainerProperties().setPollTimeout(3000);
         return factory;
     }

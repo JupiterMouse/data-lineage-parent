@@ -23,7 +23,7 @@ import org.neo4j.ogm.annotation.Relationship;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@NodeEntity(label = "Column")
+@NodeEntity(label = "Column2")
 public class ColumnEntity {
 
     /**

@@ -13,6 +13,6 @@ import cn.jupitermouse.lineage.graph.entity.TableEntity;
  * @author JupiterMouse 2020/9/9
  * @since 1.0
  */
-public interface TableRepository extends Neo4jRepository<TableEntity, String> {
+public interface TableGraphRepository extends Neo4jRepository<TableEntity, String> {
 
 }

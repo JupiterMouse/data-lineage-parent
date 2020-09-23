@@ -45,6 +45,13 @@
       <version>${spring-boot.version}</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.jetbrains</groupId>
+      <artifactId>annotations</artifactId>
+      <version>19.0.0</version>
+      <scope>compile</scope>
+    </dependency>
+
   </dependencies>
 
 </project>

@@ -11,7 +11,7 @@ import cn.jupitermouse.lineage.graph.constats.NeoConstant;
 import cn.jupitermouse.lineage.graph.entity.ColumnEntity;
 import cn.jupitermouse.lineage.graph.entity.TableEntity;
 import cn.jupitermouse.lineage.graph.repository.ColumnRepository;
-import cn.jupitermouse.lineage.graph.repository.TableRepository;
+import cn.jupitermouse.lineage.graph.repository.TableGraphRepository;
 import cn.jupitermouse.lineage.graph.service.LineageElementService;
 import cn.jupitermouse.lineage.parser.durid.analyse.LineageAnalyzer;
 import cn.jupitermouse.lineage.parser.durid.dto.LineageColumnDTO;
@@ -32,11 +32,11 @@ import static cn.jupitermouse.lineage.graph.constats.NeoConstant.*;
 @Service
 public class LineageElementServiceImpl implements LineageElementService {
 
-    private final TableRepository tableRepository;
+    private final TableGraphRepository tableRepository;
 
     private final ColumnRepository columnRepository;
 
-    public LineageElementServiceImpl(TableRepository tableRepository, ColumnRepository columnRepository) {
+    public LineageElementServiceImpl(TableGraphRepository tableRepository, ColumnRepository columnRepository) {
         this.tableRepository = tableRepository;
         this.columnRepository = columnRepository;
     }

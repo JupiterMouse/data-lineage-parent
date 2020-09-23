@@ -4,7 +4,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import cn.jupitermouse.lineage.graph.repository.TableRepository;
+import cn.jupitermouse.lineage.graph.repository.TableGraphRepository;
 import cn.jupitermouse.lineage.graph.service.LineageElementService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -25,9 +25,9 @@ import lombok.extern.slf4j.Slf4j;
 public class GraphTableController {
 
     private final LineageElementService lineageElementService;
-    private final TableRepository tableRepository;
+    private final TableGraphRepository tableRepository;
 
-    public GraphTableController(LineageElementService lineageElementService, TableRepository tableRepository) {
+    public GraphTableController(LineageElementService lineageElementService, TableGraphRepository tableRepository) {
         this.lineageElementService = lineageElementService;
         this.tableRepository = tableRepository;
     }
