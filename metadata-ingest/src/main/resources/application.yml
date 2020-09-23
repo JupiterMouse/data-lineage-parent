@@ -1,0 +1,9 @@
+lineage:
+  datasource:
+    hr:
+      jdbc-url: jdbc:postgresql://192.168.17.153:5432/hr
+      username: hdsp
+      password: hdsp
+      driver-class-name: org.postgresql.Driver
+
+

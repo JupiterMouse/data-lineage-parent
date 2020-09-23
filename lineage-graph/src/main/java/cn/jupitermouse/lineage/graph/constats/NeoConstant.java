@@ -29,4 +29,15 @@ public class NeoConstant {
 
     public static final String DEFAULT_DB_SCHEMA = "schema";
 
+    public static class Graph {
+
+        public static final String NODE_DATABASE = "Database";
+        public static final String NODE_SCHEMA = "Schema";
+        public static final String NODE_TABLE = "Table";
+        public static final String NODE_FIELD = "Field";
+        public static final String REL_HAS = "HAS";
+        public static final String REL_OF = "OF";
+        public static final String REL_FROM = "FROM";
+    }
+
 }
