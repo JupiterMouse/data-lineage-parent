@@ -14,5 +14,4 @@ import cn.jupitermouse.lineage.graph.model.TableEntity;
  */
 public interface TableRepository extends Neo4jRepository<TableEntity, String> {
 
-//    List<TableEntity> findAllByCosutum(TableEntity entity);
 }

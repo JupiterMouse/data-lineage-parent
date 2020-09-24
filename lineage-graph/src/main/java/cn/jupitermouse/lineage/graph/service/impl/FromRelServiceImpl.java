@@ -11,6 +11,8 @@ import cn.jupitermouse.lineage.graph.model.FromRelationship;
 import cn.jupitermouse.lineage.graph.model.TableEntity;
 import cn.jupitermouse.lineage.graph.model.repository.FromRelationshipRepository;
 import cn.jupitermouse.lineage.graph.service.FromRelService;
+import org.neo4j.ogm.session.Session;
+import org.neo4j.ogm.session.SessionFactory;
 
 /**
  * <p>
@@ -23,15 +25,26 @@ import cn.jupitermouse.lineage.graph.service.FromRelService;
 @Service
 public class FromRelServiceImpl implements FromRelService {
 
+    private final SessionFactory sessionFactory;
     private final FromRelationshipRepository fromRepository;
 
-    public FromRelServiceImpl(FromRelationshipRepository fromRepository) {
+    public FromRelServiceImpl(SessionFactory sessionFactory,
+            FromRelationshipRepository fromRepository) {
+        this.sessionFactory = sessionFactory;
         this.fromRepository = fromRepository;
     }
 
+    /**
+     * START n=node:node_auto_index(name='Neo'), t=node:node_auto_index(name='The Architect') CREATE UNIQUE
+     * n-[r:SPEAKS_WITH]-t RETURN n AS Neo,r
+     *
+     * @param start 从节点列表  如List<Fields> -> Table
+     * @param ends  目标节点 为大一级的节点
+     */
     @Override
     public void createNodeFromRel(BaseNodeEntity start, List<BaseNodeEntity> ends) {
-
+        final Session session = sessionFactory.openSession();
+//        session.query()
     }
 
     @Override

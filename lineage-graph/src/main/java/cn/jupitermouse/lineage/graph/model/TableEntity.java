@@ -41,8 +41,28 @@ public class TableEntity extends BaseNodeEntity {
      */
     private Integer viewFlag;
 
+    public TableEntity(String clusterName, String database, String schema, String table) {
+        setClusterName(clusterName);
+        this.database = database;
+        this.schema = schema;
+        this.table = table;
+        setGraphId(this.generateId(clusterName));
+    }
+
+    public TableEntity(Long tenantId, String datasourceCode, String database, String schema, String table) {
+        this.setTenantId(tenantId);
+        this.database = database;
+        this.schema = schema;
+        this.table = table;
+        setDatasourceCode(datasourceCode);
+        setGraphId(this.generateId());
+    }
+
     @Relationship(type = NeoConstant.Graph.REL_OF, direction = Relationship.INCOMING)
     private List<FieldEntity> fieldOfTableList;
+
+    @Relationship(type = NeoConstant.Graph.REL_FROM, direction = Relationship.DIRECTION)
+    private List<TableEntity> fromTableList;
 
     @Override
     protected boolean valid() {

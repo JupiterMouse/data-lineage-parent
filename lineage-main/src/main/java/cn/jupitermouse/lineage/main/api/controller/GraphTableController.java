@@ -34,8 +34,9 @@ public class GraphTableController {
 
     @ApiOperation(value = "生成表血缘", notes = "生成表血缘")
     @PostMapping
-    public ResponseEntity<Void> saveTableLineage(@RequestBody String sql, String dbType) {
-        lineageElementService.ingestTableLineage(sql, dbType);
+    public ResponseEntity<Void> saveTableLineage(String cluster, String catalog, String schema, @RequestBody String sql,
+            String dbType) {
+        lineageElementService.ingestTableLineage(cluster, catalog, schema, dbType, sql);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 

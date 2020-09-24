@@ -28,8 +28,12 @@ public class SQLEventServiceImpl implements IBaseEventService {
     @Override
     public boolean dealEvent(String message) {
         SqlRequestDTO sqlRequestDTO = JSON.toObj(message, SqlRequestDTO.class);
-        lineageElementService.ingestTableLineage(sqlRequestDTO.getDbType(), sqlRequestDTO.getSql());
-        lineageElementService.ingestColumnLineage(sqlRequestDTO.getDbType(), sqlRequestDTO.getSql());
+        lineageElementService
+                .ingestTableLineage(sqlRequestDTO.getCluster(), sqlRequestDTO.getDatabase(), sqlRequestDTO.getSchema(),
+                        sqlRequestDTO.getDbType(), sqlRequestDTO.getSql());
+        lineageElementService
+                .ingestColumnLineage(sqlRequestDTO.getCluster(), sqlRequestDTO.getDatabase(), sqlRequestDTO.getSchema(),
+                        sqlRequestDTO.getDbType(), sqlRequestDTO.getSql());
         return true;
     }
 

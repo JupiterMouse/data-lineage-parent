@@ -27,6 +27,8 @@ import com.alibaba.druid.sql.ast.SQLStatement;
  */
 public class LineageAnalyzer {
 
+    volatile AtomicInteger sequence = new AtomicInteger();
+
     /**
      * 返回原始的血缘树
      *
@@ -36,7 +38,7 @@ public class LineageAnalyzer {
     public TreeNode<TableNode> getLineageTree(SqlRequestDTO dto) {
         // 构建血缘树
         // 生成初始序列
-        AtomicInteger sequence = new AtomicInteger();
+
         // 构建根节点血缘树
         TreeNode<TableNode> root = new TreeNode<>();
         // 解析SQL后生成的statement
@@ -45,7 +47,27 @@ public class LineageAnalyzer {
         ProcessorRegister.getStatementProcessor(statement.getClass())
                 .process(dto.getDbType(), sequence, root, statement);
         // TODO 字段清洗 && 缺失字段补全 && 字段最可能来源的表
+        this.repairColumnNoTableName(root);
         return root;
+    }
+
+    public void repairColumnNoTableName(TreeNode<TableNode> root) {
+        // 查询字段为单表
+        final TableNode tableNode = root.getValue();
+        if (root.isLeaf()) {
+            return;
+        }
+        final List<ColumnNode> columns = tableNode.getColumns();
+        if (!CollectionUtils.isEmpty(columns)) {
+            for (ColumnNode columnNode : columns) {
+                if (CollectionUtils.isEmpty(columnNode.getSourceColumns())) {
+                    // 修复为当前节点,暂只考虑单表
+                    columnNode.setExpression(tableNode.getExpression());
+                }
+            }
+        }
+        // 循环
+        root.getChildList().forEach(this::repairColumnNoTableName);
     }
 
     /**

@@ -32,8 +32,9 @@ public class GraphColumnController {
 
     @ApiOperation(value = "生成字段血缘", notes = "生成字段血缘")
     @PostMapping
-    public ResponseEntity<Void> saveColumnLineage(@RequestBody String sql, String dbType) {
-        lineageElementService.ingestTableLineage(sql, dbType);
+    public ResponseEntity<Void> saveColumnLineage(String cluster, String catalog, String schema,
+            @RequestBody String sql, String dbType) {
+        lineageElementService.ingestColumnLineage(cluster, catalog, schema, dbType, sql);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 

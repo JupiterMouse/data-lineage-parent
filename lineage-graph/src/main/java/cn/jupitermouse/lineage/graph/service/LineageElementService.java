@@ -13,17 +13,23 @@ public interface LineageElementService {
     /**
      * 输入表血缘到图
      *
-     * @param sql    执行的SQL
-     * @param dbType 数据库
+     * @param cluster cluster
+     * @param catalog catalog
+     * @param schema  schema
+     * @param dbType  数据库类型
+     * @param sql     执行的SQL
      */
-    void ingestTableLineage(String dbType, String sql);
+    void ingestTableLineage(String cluster, String catalog, String schema, String dbType, String sql);
 
     /**
-     * 输入字段血缘到图
+     * 字段血缘
      *
-     * @param sql    执行的SQL
-     * @param dbType 数据库
+     * @param cluster cluster
+     * @param catalog catalog
+     * @param schema  schema
+     * @param dbType  数据库类型
+     * @param sql     执行的SQL
      */
-    void ingestColumnLineage(String dbType, String sql);
+    void ingestColumnLineage(String cluster, String catalog, String schema, String dbType, String sql);
 
 }

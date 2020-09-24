@@ -24,6 +24,10 @@ public class SqlRequestDTO {
      */
     private String dbType;
     /**
+     * cluster 和 tenantId == null 时 取cluster
+     */
+    private String cluster;
+    /**
      * sql
      */
     private String sql;
@@ -36,7 +40,7 @@ public class SqlRequestDTO {
      */
     private String datasourceCode;
     /**
-     * 数据库或schema
+     * catalog
      */
     private String database;
     /**

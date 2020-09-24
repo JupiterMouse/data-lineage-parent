@@ -197,7 +197,6 @@ public class ColumnLineageTracer {
                 .orElseThrow(() -> new ParserException("repair missing table failed,column expression[%s].",
                         columnNode.getExpression()))
                 .getName();
-
     }
 
 }
