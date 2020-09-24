@@ -3,9 +3,7 @@ package cn.jupitermouse.lineage.graph.domain.model;
 import java.util.Map;
 
 import cn.jupitermouse.lineage.graph.infra.constats.NeoConstant;
-import cn.jupitermouse.lineage.graph.infra.convert.MapCompositeAttributeConverter;
 import org.neo4j.ogm.annotation.Properties;
-import org.neo4j.ogm.annotation.typeconversion.Convert;
 
 /**
  * <p>
@@ -26,7 +24,6 @@ public abstract class BaseEntity {
      * 节点属性值
      */
     @Properties(prefix = NeoConstant.Graph.ATTR)
-    @Convert(MapCompositeAttributeConverter.class)
     private Map<String, String> attrs;
 
     public Map<String, String> getAttrs() {

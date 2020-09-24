@@ -18,5 +18,5 @@ import org.neo4j.ogm.annotation.NodeEntity;
 @AllArgsConstructor
 @Builder
 @NodeEntity(label = NeoConstant.Graph.NODE_CLUSTER)
-public class ClusterEntity {
+public class ClusterEntity extends BaseNodeEntity{
 }
