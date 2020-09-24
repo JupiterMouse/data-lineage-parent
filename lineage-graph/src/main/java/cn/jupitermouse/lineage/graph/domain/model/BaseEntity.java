@@ -1,11 +1,10 @@
-package cn.jupitermouse.lineage.graph.model;
+package cn.jupitermouse.lineage.graph.domain.model;
 
 import java.util.Date;
 import java.util.Map;
 
-import cn.jupitermouse.lineage.graph.model.convert.MapCompositeAttributeConverter;
+import cn.jupitermouse.lineage.graph.infra.convert.MapCompositeAttributeConverter;
 import org.neo4j.ogm.annotation.typeconversion.Convert;
-
 /**
  * <p>
  * BaseEntity
@@ -28,7 +27,6 @@ public abstract class BaseEntity {
     @Convert(MapCompositeAttributeConverter.class)
     private Map<String, String> attrs;
 
-    //    @Version
     private Long version;
 
     //===============================================================================

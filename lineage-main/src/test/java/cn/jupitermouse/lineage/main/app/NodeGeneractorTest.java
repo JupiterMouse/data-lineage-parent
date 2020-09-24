@@ -1,5 +1,6 @@
 package cn.jupitermouse.lineage.main.app;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -8,10 +9,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import cn.jupitermouse.lineage.graph.model.FieldEntity;
-import cn.jupitermouse.lineage.graph.model.TableEntity;
-import cn.jupitermouse.lineage.graph.model.repository.FieldRepository;
+import cn.jupitermouse.lineage.graph.domain.model.FieldEntity;
+import cn.jupitermouse.lineage.graph.domain.model.TableEntity;
+import cn.jupitermouse.lineage.graph.domain.repository.FieldRepository;
+import cn.jupitermouse.lineage.graph.domain.repository.FromRelationshipRepository;
+import cn.jupitermouse.lineage.graph.infra.constats.NeoConstant;
+import cn.jupitermouse.lineage.graph.service.FromRelService;
 import cn.jupitermouse.lineage.graph.service.OfRelService;
+import cn.jupitermouse.lineage.graph.service.RelationshipService;
 import cn.jupitermouse.lineage.main.DataLineageApp;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,6 +38,15 @@ public class NodeGeneractorTest {
 
     @Autowired
     private FieldRepository fieldRepository;
+
+    @Autowired
+    private FromRelationshipRepository fromRelationshipRepository;
+
+    @Autowired
+    private FromRelService fromRelService;
+
+    @Autowired
+    private RelationshipService relationshipService;
 
     @Test
     public void testNode() {
@@ -59,6 +73,39 @@ public class NodeGeneractorTest {
         tableEntity.setName("iam_user");
         tableEntity.setGraphId();
         ofRelService.createFieldOfTableRel(Collections.singletonList(fieldEntity), tableEntity);
+        System.out.println();
+    }
+
+
+    @Test
+    public void testForm() {
+//        final FieldId start = new FieldId();
+//        start.setGraphId("hand-hr-gp/hand/ods/ods_sap_et_orglist/vename");
+//        final FieldId end = new FieldId();
+//        end.setGraphId("hand-hr-gp/hand/ods/ods_sap_et_orglist/memail");
+//
+//        final FromRelationship fromRelationship = FromRelationship.builder()
+//                .start(start)
+//                .end(end)
+//                .build();
+//        fromRelationshipRepository.save(fromRelationship);
+//        System.out.println();
+    }
+
+
+    @Test
+    public void query() {
+        fromRelService.createNodeFromRel(null, null);
+        System.out.println();
+    }
+
+    @Test
+    public void rel() {
+        Map<String, String> map = new HashMap<>();
+        map.put("a1", "a1");
+        relationshipService.nodeRelNodes(NeoConstant.Graph.NODE_FIELD, "hand-hr-gp/hand/ods/ods_sap_et_orglist/vename",
+                NeoConstant.Graph.NODE_FIELD, Arrays.asList("hand-hr-gp/hand/ods/ods_sap_et_orglist/memail", "hand-hr-gp/hand/ods/ods_sap_et_orglist/memail2"),
+                NeoConstant.Graph.REL_FROM, map);
         System.out.println();
     }
 }

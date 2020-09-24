@@ -1,4 +1,4 @@
-package cn.jupitermouse.lineage.graph.constats;
+package cn.jupitermouse.lineage.graph.infra.constats;
 
 /**
  * <p>

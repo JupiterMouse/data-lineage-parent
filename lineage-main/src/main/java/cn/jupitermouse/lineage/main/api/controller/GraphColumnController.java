@@ -4,7 +4,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import cn.jupitermouse.lineage.graph.repository.ColumnRepository;
+import cn.jupitermouse.lineage.graph.domain.repository.FieldRepository;
 import cn.jupitermouse.lineage.graph.service.LineageElementService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -23,11 +23,11 @@ import io.swagger.annotations.ApiOperation;
 public class GraphColumnController {
 
     private final LineageElementService lineageElementService;
-    private final ColumnRepository columnRepository;
+    private final FieldRepository fieldRepository;
 
-    public GraphColumnController(LineageElementService lineageElementService, ColumnRepository columnRepository) {
+    public GraphColumnController(LineageElementService lineageElementService, FieldRepository fieldRepository) {
         this.lineageElementService = lineageElementService;
-        this.columnRepository = columnRepository;
+        this.fieldRepository = fieldRepository;
     }
 
     @ApiOperation(value = "生成字段血缘", notes = "生成字段血缘")
@@ -41,7 +41,7 @@ public class GraphColumnController {
     @DeleteMapping
     @ApiOperation(value = "清空图数据库", notes = "清空图数据库")
     public ResponseEntity<Void> cleanColumnLineage() {
-        columnRepository.deleteAll();
+        fieldRepository.deleteAll();
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

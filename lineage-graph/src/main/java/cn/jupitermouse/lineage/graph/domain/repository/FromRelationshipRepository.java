@@ -1,8 +1,8 @@
-package cn.jupitermouse.lineage.graph.model.repository;
+package cn.jupitermouse.lineage.graph.domain.repository;
 
 import org.springframework.data.neo4j.repository.Neo4jRepository;
 
-import cn.jupitermouse.lineage.graph.model.FromRelationship;
+import cn.jupitermouse.lineage.graph.domain.model.FromRelationship;
 
 /**
  * <p>
@@ -13,5 +13,4 @@ import cn.jupitermouse.lineage.graph.model.FromRelationship;
  * @since 1.0
  */
 public interface FromRelationshipRepository extends Neo4jRepository<FromRelationship, String> {
-
 }

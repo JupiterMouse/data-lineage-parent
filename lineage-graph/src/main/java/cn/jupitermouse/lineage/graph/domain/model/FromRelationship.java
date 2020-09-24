@@ -1,6 +1,8 @@
-package cn.jupitermouse.lineage.graph.model;
+package cn.jupitermouse.lineage.graph.domain.model;
 
-import cn.jupitermouse.lineage.graph.constats.NeoConstant;
+import java.util.List;
+
+import cn.jupitermouse.lineage.graph.infra.constats.NeoConstant;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -28,6 +30,12 @@ public class FromRelationship extends BaseEntity {
      */
     @StartNode
     private BaseNodeEntity start;
+
+//    /**
+//     * 关系的结束端 多
+//     */
+//    @EndNode
+//    private List<BaseId> ends;
 
     /**
      * 关系的结束端

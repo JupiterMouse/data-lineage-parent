@@ -1,8 +1,9 @@
-package cn.jupitermouse.lineage.graph.model.repository;
+package cn.jupitermouse.lineage.graph.domain.repository;
 
 import org.springframework.data.neo4j.repository.Neo4jRepository;
 
-import cn.jupitermouse.lineage.graph.model.DatabaseEntity;
+import cn.jupitermouse.lineage.graph.domain.model.DatabaseEntity;
+
 
 /**
  * <p>

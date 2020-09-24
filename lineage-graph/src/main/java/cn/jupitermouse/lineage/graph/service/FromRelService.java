@@ -2,9 +2,10 @@ package cn.jupitermouse.lineage.graph.service;
 
 import java.util.List;
 
-import cn.jupitermouse.lineage.graph.model.BaseNodeEntity;
-import cn.jupitermouse.lineage.graph.model.FieldEntity;
-import cn.jupitermouse.lineage.graph.model.TableEntity;
+import cn.jupitermouse.lineage.graph.domain.model.BaseNodeEntity;
+import cn.jupitermouse.lineage.graph.domain.model.FieldEntity;
+import cn.jupitermouse.lineage.graph.domain.model.TableEntity;
+import org.neo4j.ogm.model.Result;
 
 /**
  * <p>
@@ -27,6 +28,8 @@ public interface FromRelService {
      * @param ends  目标节点 为大一级的节点
      */
     void createNodeFromRel(BaseNodeEntity start, List<BaseNodeEntity> ends);
+
+    Result createNodeFromRel(String sql);
 
     /**
      * 创建关系节点 来源关系 table -> tables

@@ -1,7 +1,8 @@
-package cn.jupitermouse.lineage.graph.model.dto;
+package cn.jupitermouse.lineage.graph.domain.model.dto;
 
-import cn.jupitermouse.lineage.graph.model.SchemaEntity;
-import cn.jupitermouse.lineage.graph.model.TableEntity;
+
+import cn.jupitermouse.lineage.graph.domain.model.SchemaEntity;
+import cn.jupitermouse.lineage.graph.domain.model.TableEntity;
 
 /**
  * <p>

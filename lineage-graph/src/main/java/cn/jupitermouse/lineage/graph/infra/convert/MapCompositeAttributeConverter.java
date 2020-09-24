@@ -1,4 +1,4 @@
-package cn.jupitermouse.lineage.graph.model.convert;
+package cn.jupitermouse.lineage.graph.infra.convert;
 
 import java.util.Collections;
 import java.util.Map;
@@ -24,6 +24,7 @@ public class MapCompositeAttributeConverter implements CompositeAttributeConvert
         }
         return value;
     }
+
 
     @Override
     public Map<String, ?> toEntityAttribute(Map<String, ?> value) {

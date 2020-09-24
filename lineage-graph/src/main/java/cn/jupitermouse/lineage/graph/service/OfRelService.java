@@ -2,7 +2,7 @@ package cn.jupitermouse.lineage.graph.service;
 
 import java.util.List;
 
-import cn.jupitermouse.lineage.graph.model.*;
+import cn.jupitermouse.lineage.graph.domain.model.*;
 
 /**
  * <p>

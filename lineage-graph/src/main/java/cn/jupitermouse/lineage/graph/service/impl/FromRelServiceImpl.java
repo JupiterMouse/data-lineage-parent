@@ -1,16 +1,18 @@
 package cn.jupitermouse.lineage.graph.service.impl;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
-import cn.jupitermouse.lineage.graph.model.BaseNodeEntity;
-import cn.jupitermouse.lineage.graph.model.FieldEntity;
-import cn.jupitermouse.lineage.graph.model.FromRelationship;
-import cn.jupitermouse.lineage.graph.model.TableEntity;
-import cn.jupitermouse.lineage.graph.model.repository.FromRelationshipRepository;
+import cn.jupitermouse.lineage.graph.domain.model.BaseNodeEntity;
+import cn.jupitermouse.lineage.graph.domain.model.FieldEntity;
+import cn.jupitermouse.lineage.graph.domain.model.FromRelationship;
+import cn.jupitermouse.lineage.graph.domain.model.TableEntity;
+import cn.jupitermouse.lineage.graph.domain.repository.FromRelationshipRepository;
 import cn.jupitermouse.lineage.graph.service.FromRelService;
+import org.neo4j.ogm.model.Result;
 import org.neo4j.ogm.session.Session;
 import org.neo4j.ogm.session.SessionFactory;
 
@@ -44,7 +46,16 @@ public class FromRelServiceImpl implements FromRelService {
     @Override
     public void createNodeFromRel(BaseNodeEntity start, List<BaseNodeEntity> ends) {
         final Session session = sessionFactory.openSession();
-//        session.query()
+        session.query(
+                "CREATE (video1:YoutubeVideo1{title:\"Action Movie1\",updated_by:\"Abc\",uploaded_date:\"10/10/2010\"})\n"
+                        + "-[movie:ACTION_MOVIES{rating:1}]->\n"
+                        + "(video2:YoutubeVideo2{title:\"Action Movie2\",updated_by:\"Xyz\",uploaded_date:\"12/12/2012\"})",
+                Collections.emptyMap());
+    }
+
+    @Override
+    public Result createNodeFromRel(String sql) {
+        return sessionFactory.openSession().query(sql, Collections.emptyMap());
     }
 
     @Override

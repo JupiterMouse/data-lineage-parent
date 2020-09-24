@@ -2,11 +2,11 @@ package cn.jupitermouse.lineage.graph.service.impl;
 
 import org.springframework.stereotype.Service;
 
-import cn.jupitermouse.lineage.graph.model.*;
-import cn.jupitermouse.lineage.graph.model.repository.DatabaseRepository;
-import cn.jupitermouse.lineage.graph.model.repository.FieldRepository;
-import cn.jupitermouse.lineage.graph.model.repository.SchemaRepository;
-import cn.jupitermouse.lineage.graph.model.repository.TableRepository;
+import cn.jupitermouse.lineage.graph.domain.model.*;
+import cn.jupitermouse.lineage.graph.domain.repository.DatabaseRepository;
+import cn.jupitermouse.lineage.graph.domain.repository.FieldRepository;
+import cn.jupitermouse.lineage.graph.domain.repository.SchemaRepository;
+import cn.jupitermouse.lineage.graph.domain.repository.TableRepository;
 import cn.jupitermouse.lineage.graph.service.NodeService;
 
 /**

@@ -1,4 +1,4 @@
-package cn.jupitermouse.lineage.graph.model;
+package cn.jupitermouse.lineage.graph.domain.model;
 
 import java.util.Arrays;
 
@@ -131,7 +131,6 @@ public class QualifiedName {
             @NonNull final String catalogName) {
         return new QualifiedName(clusterName, catalogName, null, null, null);
     }
-
     public static QualifiedName ofSchema(
             @NonNull final String clusterName,
             @NonNull final String catalogName,

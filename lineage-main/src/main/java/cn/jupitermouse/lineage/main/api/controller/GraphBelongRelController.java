@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import cn.jupitermouse.lineage.graph.model.FieldEntity;
-import cn.jupitermouse.lineage.graph.model.TableEntity;
+import cn.jupitermouse.lineage.graph.domain.model.FieldEntity;
+import cn.jupitermouse.lineage.graph.domain.model.TableEntity;
 import cn.jupitermouse.lineage.graph.service.OfRelService;
 import cn.jupitermouse.lineage.main.api.dto.NodeRequestDTO;
 import io.swagger.annotations.Api;

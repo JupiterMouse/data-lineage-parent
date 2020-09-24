@@ -20,10 +20,9 @@ import org.springframework.kafka.annotation.EnableKafka;
         scanBasePackages = {"cn.jupitermouse.lineage"},
         exclude = {DataSourceAutoConfiguration.class}
 )
-@EnableNeo4jRepositories(basePackages = {"cn.jupitermouse.lineage.graph.repository",
-        "cn.jupitermouse.lineage.graph.model.repository"})
+@EnableNeo4jRepositories(basePackages = {"cn.jupitermouse.lineage.graph.domain.repository"})
 // soved not a valid entity class. Please check the entity mapping
-@EntityScan(basePackages = {"cn.jupitermouse.lineage.graph.entity", "cn.jupitermouse.lineage.graph.model"})
+@EntityScan(basePackages = {"cn.jupitermouse.lineage.graph.domain.model"})
 @EnableKafka
 public class DataLineageApp {
 

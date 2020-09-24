@@ -1,6 +1,6 @@
 package cn.jupitermouse.lineage.main.app;
 
-import cn.jupitermouse.lineage.graph.model.QualifiedName;
+import cn.jupitermouse.lineage.graph.domain.model.QualifiedName;
 import org.junit.Test;
 
 /**

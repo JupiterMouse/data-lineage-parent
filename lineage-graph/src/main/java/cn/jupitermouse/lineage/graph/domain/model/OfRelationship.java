@@ -1,6 +1,8 @@
-package cn.jupitermouse.lineage.graph.model;
+package cn.jupitermouse.lineage.graph.domain.model;
 
-import cn.jupitermouse.lineage.graph.constats.NeoConstant;
+import java.util.List;
+
+import cn.jupitermouse.lineage.graph.infra.constats.NeoConstant;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -17,10 +19,9 @@ import org.neo4j.ogm.annotation.StartNode;
  * @since 1.0
  */
 @EqualsAndHashCode(callSuper = true)
-@Data
-@Builder
 @RelationshipEntity(type = NeoConstant.Graph.REL_OF)
 @Deprecated
+@Builder
 public class OfRelationship extends BaseEntity {
 
     /**
@@ -28,6 +29,12 @@ public class OfRelationship extends BaseEntity {
      */
     @StartNode
     private BaseNodeEntity start;
+
+    /**
+     * 关系的结束端 多
+     */
+    @EndNode
+    private List<BaseNodeEntity> ends;
 
     /**
      * 关系的结束端

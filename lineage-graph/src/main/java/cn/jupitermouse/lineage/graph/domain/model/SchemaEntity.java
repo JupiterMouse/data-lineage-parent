@@ -1,8 +1,8 @@
-package cn.jupitermouse.lineage.graph.model;
+package cn.jupitermouse.lineage.graph.domain.model;
 
 import java.util.List;
 
-import cn.jupitermouse.lineage.graph.constats.NeoConstant;
+import cn.jupitermouse.lineage.graph.infra.constats.NeoConstant;
 import lombok.*;
 import org.apache.commons.lang3.StringUtils;
 import org.neo4j.ogm.annotation.NodeEntity;
@@ -44,7 +44,7 @@ public class SchemaEntity extends BaseNodeEntity {
     @Override
     protected String generateId() {
         this.valid();
-        if (getTenantId() == null) {
+        if (this.getTenantId() == null) {
             return QualifiedName.ofSchema(this.getClusterName(), this.database, this.schema).toString();
         }
         return QualifiedName.ofSchema(this.generateCluster(), this.database, this.schema).toString();

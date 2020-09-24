@@ -1,7 +1,7 @@
 package cn.jupitermouse.lineage.main.api.dto;
 
-import cn.jupitermouse.lineage.graph.model.FieldEntity;
-import cn.jupitermouse.lineage.graph.model.TableEntity;
+import cn.jupitermouse.lineage.graph.domain.model.FieldEntity;
+import cn.jupitermouse.lineage.graph.domain.model.TableEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

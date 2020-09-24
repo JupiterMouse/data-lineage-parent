@@ -1,6 +1,6 @@
-package cn.jupitermouse.lineage.graph.model;
+package cn.jupitermouse.lineage.graph.domain.model;
 
-import cn.jupitermouse.lineage.graph.constats.NeoConstant;
+import cn.jupitermouse.lineage.graph.infra.constats.NeoConstant;
 import lombok.*;
 import org.apache.commons.lang3.StringUtils;
 import org.neo4j.ogm.annotation.NodeEntity;

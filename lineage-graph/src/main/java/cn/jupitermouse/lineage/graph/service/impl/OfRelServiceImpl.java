@@ -5,11 +5,11 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
-import cn.jupitermouse.lineage.graph.model.*;
-import cn.jupitermouse.lineage.graph.model.repository.DatabaseRepository;
-import cn.jupitermouse.lineage.graph.model.repository.OfRelationshipRepository;
-import cn.jupitermouse.lineage.graph.model.repository.SchemaRepository;
-import cn.jupitermouse.lineage.graph.model.repository.TableRepository;
+import cn.jupitermouse.lineage.graph.domain.model.*;
+import cn.jupitermouse.lineage.graph.domain.repository.DatabaseRepository;
+import cn.jupitermouse.lineage.graph.domain.repository.OfRelationshipRepository;
+import cn.jupitermouse.lineage.graph.domain.repository.SchemaRepository;
+import cn.jupitermouse.lineage.graph.domain.repository.TableRepository;
 import cn.jupitermouse.lineage.graph.service.OfRelService;
 
 /**

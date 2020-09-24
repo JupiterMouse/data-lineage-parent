@@ -1,6 +1,6 @@
 package cn.jupitermouse.lineage.graph.service;
 
-import cn.jupitermouse.lineage.graph.model.BaseNodeEntity;
+import cn.jupitermouse.lineage.graph.domain.model.BaseNodeEntity;
 
 /**
  * <p>

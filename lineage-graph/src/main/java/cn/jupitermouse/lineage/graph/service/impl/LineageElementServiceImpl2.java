@@ -9,10 +9,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import cn.jupitermouse.lineage.common.message.SqlRequestDTO;
-import cn.jupitermouse.lineage.graph.model.FieldEntity;
-import cn.jupitermouse.lineage.graph.model.TableEntity;
-import cn.jupitermouse.lineage.graph.model.repository.FieldRepository;
-import cn.jupitermouse.lineage.graph.model.repository.TableRepository;
+import cn.jupitermouse.lineage.graph.domain.model.FieldEntity;
+import cn.jupitermouse.lineage.graph.domain.model.TableEntity;
+import cn.jupitermouse.lineage.graph.domain.repository.FieldRepository;
+import cn.jupitermouse.lineage.graph.domain.repository.TableRepository;
 import cn.jupitermouse.lineage.graph.service.LineageElementService;
 import cn.jupitermouse.lineage.parser.durid.analyse.LineageAnalyzer;
 import cn.jupitermouse.lineage.parser.durid.dto.LineageColumnDTO;

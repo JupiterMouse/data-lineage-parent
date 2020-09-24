@@ -8,10 +8,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
-import cn.jupitermouse.lineage.graph.model.FieldEntity;
-import cn.jupitermouse.lineage.graph.model.SchemaEntity;
-import cn.jupitermouse.lineage.graph.model.TableEntity;
-import cn.jupitermouse.lineage.graph.model.repository.TableRepository;
+import cn.jupitermouse.lineage.graph.domain.model.FieldEntity;
+import cn.jupitermouse.lineage.graph.domain.model.SchemaEntity;
+import cn.jupitermouse.lineage.graph.domain.model.TableEntity;
+import cn.jupitermouse.lineage.graph.domain.repository.TableRepository;
 import cn.jupitermouse.lineage.graph.service.OfRelService;
 import cn.jupitermouse.lineage.metadata.ingest.infra.config.DataSourceHolder;
 import cn.jupitermouse.lineage.metadata.ingest.infra.util.MetaDataUtil;

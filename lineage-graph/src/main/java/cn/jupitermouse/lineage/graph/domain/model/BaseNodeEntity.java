@@ -1,4 +1,4 @@
-package cn.jupitermouse.lineage.graph.model;
+package cn.jupitermouse.lineage.graph.domain.model;
 
 
 import org.neo4j.ogm.annotation.Id;
@@ -39,6 +39,14 @@ public abstract class BaseNodeEntity extends BaseEntity {
 
     private String clusterName;
 
+    public String getGraphId() {
+        return graphId;
+    }
+
+    public void setGraphId(String graphId) {
+        this.graphId = graphId;
+    }
+
     protected boolean valid() {
         return true;
     }
@@ -64,14 +72,6 @@ public abstract class BaseNodeEntity extends BaseEntity {
         this.clusterName = clusterName;
     }
 
-    public String getGraphId() {
-        return graphId;
-    }
-
-    public void setGraphId(String graphId) {
-        this.graphId = graphId;
-    }
-
     public String getName() {
         return name;
     }
@@ -87,6 +87,7 @@ public abstract class BaseNodeEntity extends BaseEntity {
     public void setTenantId(Long tenantId) {
         this.tenantId = tenantId;
     }
+
 
     public String getDatasourceCode() {
         return datasourceCode;
