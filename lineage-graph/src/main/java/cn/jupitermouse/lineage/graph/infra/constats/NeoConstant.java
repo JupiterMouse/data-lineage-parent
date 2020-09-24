@@ -35,9 +35,12 @@ public class NeoConstant {
         public static final String NODE_SCHEMA = "Schema";
         public static final String NODE_TABLE = "Table";
         public static final String NODE_FIELD = "Field";
+        public static final String NODE_CLUSTER = "Cluster";
         public static final String REL_HAS = "HAS";
         public static final String REL_OF = "OF";
         public static final String REL_FROM = "FROM";
+        public static final String ATTR="attr";
+        public static final String ATTR_DELIMITER =".";
     }
 
 }

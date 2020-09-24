@@ -1,125 +1,94 @@
-//package cn.jupitermouse.lineage.graph.service.impl;
-//
-//import java.util.ArrayList;
-//import java.util.List;
-//import java.util.stream.Collectors;
-//
-//import org.springframework.stereotype.Service;
-//
-//import cn.jupitermouse.lineage.common.message.SqlRequestDTO;
-//import cn.jupitermouse.lineage.graph.constats.NeoConstant;
-//import cn.jupitermouse.lineage.graph.entity.ColumnEntity;
-//import cn.jupitermouse.lineage.graph.entity.TableEntity;
-//import cn.jupitermouse.lineage.graph.repository.ColumnRepository;
-//import cn.jupitermouse.lineage.graph.repository.TableGraphRepository;
-//import cn.jupitermouse.lineage.graph.service.LineageElementService;
-//import cn.jupitermouse.lineage.parser.durid.analyse.LineageAnalyzer;
-//import cn.jupitermouse.lineage.parser.durid.dto.LineageColumnDTO;
-//import cn.jupitermouse.lineage.parser.model.ColumnNode;
-//import cn.jupitermouse.lineage.parser.model.TableNode;
-//import cn.jupitermouse.lineage.parser.model.TreeNode;
-//
-//import static cn.jupitermouse.lineage.graph.constats.NeoConstant.*;
-//
-///**
-// * <p>
-// * 血缘关系写入图数据库
-// * </p>
-// *
-// * @author JupiterMouse 2020/09/09
-// * @since 1.0
-// */
-//@Service
-//public class LineageElementServiceImpl implements LineageElementService {
-//
-//    private final TableGraphRepository tableRepository;
-//
-//    private final ColumnRepository columnRepository;
-//
-//    public LineageElementServiceImpl(TableGraphRepository tableRepository, ColumnRepository columnRepository) {
-//        this.tableRepository = tableRepository;
-//        this.columnRepository = columnRepository;
-//    }
-//
-//    @Override
-//    public void ingestTableLineage(String dbType, String sql) {
-//        LineageAnalyzer lineageAnalyzer = new LineageAnalyzer();
-//        TreeNode<TableNode> root = lineageAnalyzer
-//                .getLineageTree(SqlRequestDTO.builder().dbType(dbType).sql(sql).build());
-//        List<TableNode> sourceTableNodeList = new ArrayList<>();
-//        lineageAnalyzer.traverseTableLineageTree(root, sourceTableNodeList);
-//        // 构建写入图的对象
-//        List<TableEntity> fromTableEntityList = sourceTableNodeList.stream().map(this::transform2TableEntity)
-//                .collect(Collectors.toList());
-//        TableEntity rootTableEntity = this.transform2TableEntity(root.getValue());
-//        rootTableEntity.setFromTables(fromTableEntityList);
-//        tableRepository.save(rootTableEntity);
-//    }
-//
-//    @Override
-//    public void ingestColumnLineage(String dbType, String sql) {
-//        LineageAnalyzer lineageAnalyzer = new LineageAnalyzer();
-//        List<LineageColumnDTO> lineageColumnDTOList = lineageAnalyzer
-//                .getColumnLineage(SqlRequestDTO.builder().dbType(dbType).sql(sql).build());
-//        List<ColumnEntity> resultColumnEntityList = new ArrayList<>();
-//        for (LineageColumnDTO lineageColumnDTO : lineageColumnDTOList) {
-//            ColumnEntity rootColumnEntity = this.transform2ColumnEntity(lineageColumnDTO.getColumn());
-//            List<ColumnEntity> sourceColumnEntityList = lineageColumnDTO.getSourceColumnList().stream()
-//                    .map(this::transform2ColumnEntity).collect(Collectors.toList());
-//            rootColumnEntity.setColumnSource(sourceColumnEntityList);
-//            resultColumnEntityList.add(rootColumnEntity);
-//        }
-//        columnRepository.saveAll(resultColumnEntityList);
-//    }
-//
-//    @Override
-//    public void ingestTableLineage(String cluster, String catalog, String schema, String dbType, String sql) {
-//        LineageAnalyzer lineageAnalyzer = new LineageAnalyzer();
-//        TreeNode<TableNode> root = lineageAnalyzer
-//                .getLineageTree(SqlRequestDTO.builder().dbType(dbType).sql(sql).build());
-//
-//        List<TableNode> sourceTableNodeList = new ArrayList<>();
-//        lineageAnalyzer.traverseTableLineageTree(root, sourceTableNodeList);
-//        // 请求刷新 neo4j 的table  schema
-//
-//        // 覆盖为空的 catalog，schema，schema
-//
-//
-//
-//
-//        // 构建写入图的对象
-//        List<TableEntity> fromTableEntityList = sourceTableNodeList.stream().map(this::transform2TableEntity)
-//                .collect(Collectors.toList());
-//        TableEntity rootTableEntity = this.transform2TableEntity(root.getValue());
-//        rootTableEntity.setFromTables(fromTableEntityList);
-//        tableRepository.save(rootTableEntity);
-//    }
-//
-//    private TableEntity transform2TableEntity(TableNode table) {
-//        return TableEntity.builder()
-//                .id(this.getTableIndex(table))
-//                .name(table.getName())
-//                .build();
-//    }
-//
-//    private ColumnEntity transform2ColumnEntity(ColumnNode column) {
-//        return ColumnEntity.builder()
-//                .id(this.getColumnIndex(column))
-//                .name(column.getName())
-//                .tableName(column.getOwner().getName())
-//                .build();
-//
-//    }
-//
-//    private String getTableIndex(TableNode table) {
-//        return String
-//                .format(FT_TABLE_INDEX, DEFAULT_BUSINESS_CODE, DEFAULT_DB_NAME, DEFAULT_DB_SCHEMA, table.getName());
-//    }
-//
-//    private String getColumnIndex(ColumnNode column) {
-//        return String.format(NeoConstant.FT_COLUMN_INDEX, DEFAULT_BUSINESS_CODE, DEFAULT_DB_NAME, DEFAULT_DB_SCHEMA,
-//                column.getOwner().getName(), column.getName());
-//    }
-//
-//
-//}
+package cn.jupitermouse.lineage.graph.service.impl;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import cn.jupitermouse.lineage.common.message.SqlRequestDTO;
+import cn.jupitermouse.lineage.graph.domain.model.FieldEntity;
+import cn.jupitermouse.lineage.graph.domain.model.TableEntity;
+import cn.jupitermouse.lineage.graph.service.FromRelService;
+import cn.jupitermouse.lineage.graph.service.LineageElementService;
+import cn.jupitermouse.lineage.parser.durid.analyse.LineageAnalyzer;
+import cn.jupitermouse.lineage.parser.durid.dto.LineageColumnDTO;
+import cn.jupitermouse.lineage.parser.model.ColumnNode;
+import cn.jupitermouse.lineage.parser.model.TableNode;
+import cn.jupitermouse.lineage.parser.model.TreeNode;
+import lombok.extern.slf4j.Slf4j;
+
+/**
+ * <p>
+ * 血缘关系写入图数据库
+ * </p>
+ *
+ * @author JupiterMouse 2020/09/09
+ * @since 1.0
+ */
+@Service
+@Slf4j
+public class LineageElementServiceImpl implements LineageElementService {
+
+    private final FromRelService fromRelService;
+
+    public LineageElementServiceImpl(FromRelService fromRelService) {
+        this.fromRelService = fromRelService;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void ingestTableLineage(String cluster, String catalog, String schema, String dbType, String sql) {
+        LineageAnalyzer lineageAnalyzer = new LineageAnalyzer();
+        TreeNode<TableNode> root = lineageAnalyzer
+                .getLineageTree(SqlRequestDTO.builder().dbType(dbType).sql(sql).build());
+
+        List<TableNode> sourceTableNodeList = new ArrayList<>();
+        lineageAnalyzer.traverseTableLineageTree(root, sourceTableNodeList);
+        // TODO 同步请求刷新 neo4j 的table  schema
+        log.debug("request refresh neo4j entity ...");
+        // 覆盖为空的 catalog，schema，schema
+        final List<TableEntity> tableEntityList = sourceTableNodeList.stream()
+                .map(tableNode -> this.transform2TableEntity(cluster, catalog, schema, tableNode))
+                .collect(Collectors.toList());
+        TableEntity rootTableEntity = this.transform2TableEntity(cluster, catalog, schema, root.getValue());
+        // 构建图之间的关系，只建立关系，维持基本属性即可
+        fromRelService.createTableFromTables(rootTableEntity, tableEntityList);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void ingestColumnLineage(String cluster, String catalog, String schema, String dbType, String sql) {
+        LineageAnalyzer lineageAnalyzer = new LineageAnalyzer();
+        List<LineageColumnDTO> lineageColumnDTOList = lineageAnalyzer
+                .getColumnLineage(SqlRequestDTO.builder().dbType(dbType).sql(sql).build());
+
+        // TODO 同步请求刷新 neo4j 的table  schema
+        log.debug("request refresh neo4j entity ...");
+
+        List<FieldEntity> resultColumnEntityList = new ArrayList<>();
+        for (LineageColumnDTO lineageColumnDTO : lineageColumnDTOList) {
+            FieldEntity rootColumnEntity = this
+                    .transform2ColumnEntity(cluster, catalog, schema, lineageColumnDTO.getColumn());
+            List<FieldEntity> sourceColumnEntityList = lineageColumnDTO.getSourceColumnList().stream()
+                    .map(fieldNode -> this.transform2ColumnEntity(cluster, catalog, schema, fieldNode))
+                    .collect(Collectors.toList());
+            fromRelService.createFieldFromFields(rootColumnEntity, sourceColumnEntityList);
+        }
+    }
+
+    private TableEntity transform2TableEntity(String clusterName, String databaseName, String schema, TableNode table) {
+        return new TableEntity(clusterName, databaseName,
+                Optional.ofNullable(table.getSchemaName()).orElse(schema), table.getName());
+    }
+
+    private FieldEntity transform2ColumnEntity(String clusterName, String databaseName, String schema,
+            ColumnNode columnNode) {
+        return new FieldEntity(clusterName, databaseName,
+                Optional.ofNullable(columnNode.getOwner().getSchemaName()).orElse(schema),
+                Optional.ofNullable(columnNode.getOwner().getName()).orElse(columnNode.getTableName()),
+                columnNode.getName());
+    }
+}

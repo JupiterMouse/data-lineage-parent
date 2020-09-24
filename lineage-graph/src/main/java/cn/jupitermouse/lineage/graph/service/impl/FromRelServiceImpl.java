@@ -8,12 +8,11 @@ import org.springframework.stereotype.Service;
 
 import cn.jupitermouse.lineage.graph.domain.model.BaseNodeEntity;
 import cn.jupitermouse.lineage.graph.domain.model.FieldEntity;
-import cn.jupitermouse.lineage.graph.domain.model.FromRelationship;
 import cn.jupitermouse.lineage.graph.domain.model.TableEntity;
-import cn.jupitermouse.lineage.graph.domain.repository.FromRelationshipRepository;
+import cn.jupitermouse.lineage.graph.infra.constats.NeoConstant;
 import cn.jupitermouse.lineage.graph.service.FromRelService;
+import cn.jupitermouse.lineage.graph.service.RelationshipService;
 import org.neo4j.ogm.model.Result;
-import org.neo4j.ogm.session.Session;
 import org.neo4j.ogm.session.SessionFactory;
 
 /**
@@ -28,12 +27,12 @@ import org.neo4j.ogm.session.SessionFactory;
 public class FromRelServiceImpl implements FromRelService {
 
     private final SessionFactory sessionFactory;
-    private final FromRelationshipRepository fromRepository;
+    private final RelationshipService relationshipService;
 
     public FromRelServiceImpl(SessionFactory sessionFactory,
-            FromRelationshipRepository fromRepository) {
+            RelationshipService relationshipService) {
         this.sessionFactory = sessionFactory;
-        this.fromRepository = fromRepository;
+        this.relationshipService = relationshipService;
     }
 
     /**
@@ -45,12 +44,6 @@ public class FromRelServiceImpl implements FromRelService {
      */
     @Override
     public void createNodeFromRel(BaseNodeEntity start, List<BaseNodeEntity> ends) {
-        final Session session = sessionFactory.openSession();
-        session.query(
-                "CREATE (video1:YoutubeVideo1{title:\"Action Movie1\",updated_by:\"Abc\",uploaded_date:\"10/10/2010\"})\n"
-                        + "-[movie:ACTION_MOVIES{rating:1}]->\n"
-                        + "(video2:YoutubeVideo2{title:\"Action Movie2\",updated_by:\"Xyz\",uploaded_date:\"12/12/2012\"})",
-                Collections.emptyMap());
     }
 
     @Override
@@ -60,17 +53,25 @@ public class FromRelServiceImpl implements FromRelService {
 
     @Override
     public void createTableFromTables(TableEntity table, List<TableEntity> sourceTables) {
-        List<FromRelationship> list = sourceTables.stream()
-                .map(sourceTable -> FromRelationship.builder().start(table).end(sourceTable).build())
-                .collect(Collectors.toList());
-        fromRepository.saveAll(list);
+        final List<String> endList = sourceTables.stream().map(TableEntity::getGraphId).collect(Collectors.toList());
+        relationshipService.nodeRelNodes(NeoConstant.Graph.NODE_TABLE,
+                table.getGraphId(),
+                NeoConstant.Graph.NODE_TABLE,
+                endList,
+                NeoConstant.Graph.REL_FROM,
+                Collections.emptyMap()
+        );
     }
 
     @Override
     public void createFieldFromFields(FieldEntity field, List<FieldEntity> sourceFields) {
-        List<FromRelationship> list = sourceFields.stream()
-                .map(sourceField -> FromRelationship.builder().start(field).end(sourceField).build())
-                .collect(Collectors.toList());
-        fromRepository.saveAll(list);
+        final List<String> endList = sourceFields.stream().map(FieldEntity::getGraphId).collect(Collectors.toList());
+        relationshipService.nodeRelNodes(NeoConstant.Graph.NODE_FIELD,
+                field.getGraphId(),
+                NeoConstant.Graph.NODE_FIELD,
+                endList,
+                NeoConstant.Graph.REL_FROM,
+                Collections.emptyMap()
+        );
     }
 }

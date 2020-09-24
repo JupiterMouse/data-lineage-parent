@@ -7,7 +7,7 @@ import org.neo4j.ogm.annotation.NodeEntity;
 
 /**
  * <p>
- * database
+ * database = catalog
  * </p>
  *
  * @author JupiterMouse 2020/09/22

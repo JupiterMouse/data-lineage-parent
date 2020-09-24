@@ -7,6 +7,7 @@ import lombok.*;
 import org.apache.commons.lang3.StringUtils;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Relationship;
+import org.neo4j.ogm.annotation.Transient;
 
 /**
  * <p>
@@ -33,7 +34,7 @@ public class SchemaEntity extends BaseNodeEntity {
      */
     private String schema;
 
-    @Relationship(type = NeoConstant.Graph.REL_OF, direction = Relationship.INCOMING)
+    @Transient
     private List<TableEntity> tableOfSchemaList;
 
     @Override
@@ -58,5 +59,10 @@ public class SchemaEntity extends BaseNodeEntity {
 
     public void setGraphId() {
         this.setGraphId(this.generateId());
+    }
+
+    public void setSchema(String schema) {
+        this.schema = schema;
+        this.setName(this.schema);
     }
 }

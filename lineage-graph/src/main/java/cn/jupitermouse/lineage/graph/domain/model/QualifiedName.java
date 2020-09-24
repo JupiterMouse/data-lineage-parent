@@ -1,7 +1,5 @@
 package cn.jupitermouse.lineage.graph.domain.model;
 
-import java.util.Arrays;
-
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 
@@ -38,7 +36,6 @@ public class QualifiedName {
      */
     private final String fieldName;
     private String qualifiedName;
-    private Type type;
 
     private QualifiedName(
             @NonNull final String clusterName,
@@ -51,33 +48,7 @@ public class QualifiedName {
         this.schemaName = standardizeOptional(schemaName, true);
         this.tableName = standardizeOptional(tableName, true);
         this.fieldName = standardizeOptional(fieldName, true);
-//        if (StringUtils.isNotEmpty(viewName)) {
-//            type = Type.MVIEW;
-//        } else if (StringUtils.isNotEmpty(fieldName)) {
-//            type = Type.Field;
-//        } else if (StringUtils.isNotEmpty(tableName)) {
-//            type = Type.TABLE;
-//        } else if (StringUtils.isNotEmpty(databaseName)) {
-//            type = Type.DATABASE;
-//        } else {
-//            type = Type.CATALOG;
-//        }
 
-    }
-
-    private QualifiedName(
-            @NonNull final String clusterName,
-            @NonNull final String catalogName,
-            @Nullable final String schemaName,
-            @Nullable final String tableName,
-            @Nullable final String fieldName,
-            @NonNull final Type type) {
-        this.clusterName = clusterName;
-        this.catalogName = catalogName;
-        this.schemaName = schemaName;
-        this.fieldName = fieldName;
-        this.tableName = tableName;
-        this.type = type;
     }
 
     public static QualifiedName fromString(@NonNull final String s) {
@@ -131,6 +102,7 @@ public class QualifiedName {
             @NonNull final String catalogName) {
         return new QualifiedName(clusterName, catalogName, null, null, null);
     }
+
     public static QualifiedName ofSchema(
             @NonNull final String clusterName,
             @NonNull final String catalogName,
@@ -155,54 +127,6 @@ public class QualifiedName {
             @NonNull final String fieldName
     ) {
         return new QualifiedName(clusterName, catalogName, databaseName, tableName, fieldName);
-    }
-
-
-    /**
-     * Type of the connector resource.
-     */
-    public enum Type {
-        /**
-         * Catalog type.
-         */
-        CATALOG("^([^\\/]+)$"),
-
-        /**
-         * Database type.
-         */
-        DATABASE("^([^\\/]+)\\/([^\\/]+)$"),
-
-        /**
-         * Table type.
-         */
-        TABLE("^([^\\/]+)\\/([^\\/]+)\\/([^\\/]+)$"),
-
-        /**
-         * Field type.
-         */
-        Field("^(.*)$"),
-
-        MVIEW("^([^\\/]+)\\/([^\\/]+)\\/([^\\/]+)\\/([^\\/]+)$");
-
-        private final String regexValue;
-
-        Type(final String value) {
-            this.regexValue = value;
-        }
-
-        public String getRegexValue() {
-            return regexValue;
-        }
-
-        public static Type fromValue(final String value) {
-            for (Type type : values()) {
-                if (type.name().equalsIgnoreCase(value)) {
-                    return type;
-                }
-            }
-            throw new IllegalArgumentException(
-                    "Unknown enum type " + value + ", Allowed values are " + Arrays.toString(values()));
-        }
     }
 
     @Override

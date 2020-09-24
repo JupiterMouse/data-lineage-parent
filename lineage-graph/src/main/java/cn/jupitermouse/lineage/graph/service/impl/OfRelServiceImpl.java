@@ -1,5 +1,6 @@
 package cn.jupitermouse.lineage.graph.service.impl;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -7,10 +8,11 @@ import org.springframework.stereotype.Service;
 
 import cn.jupitermouse.lineage.graph.domain.model.*;
 import cn.jupitermouse.lineage.graph.domain.repository.DatabaseRepository;
-import cn.jupitermouse.lineage.graph.domain.repository.OfRelationshipRepository;
 import cn.jupitermouse.lineage.graph.domain.repository.SchemaRepository;
 import cn.jupitermouse.lineage.graph.domain.repository.TableRepository;
+import cn.jupitermouse.lineage.graph.infra.constats.NeoConstant;
 import cn.jupitermouse.lineage.graph.service.OfRelService;
+import cn.jupitermouse.lineage.graph.service.RelationshipService;
 
 /**
  * <p>
@@ -23,40 +25,49 @@ import cn.jupitermouse.lineage.graph.service.OfRelService;
 @Service
 public class OfRelServiceImpl implements OfRelService {
 
-    private final OfRelationshipRepository beLongRepository;
     private final TableRepository tableRepository;
     private final SchemaRepository schemaRepository;
     private final DatabaseRepository databaseRepository;
+    private final RelationshipService relationshipService;
 
-    public OfRelServiceImpl(OfRelationshipRepository beLongRepository,
+
+    public OfRelServiceImpl(
             TableRepository tableRepository,
             SchemaRepository schemaRepository,
-            DatabaseRepository databaseRepository) {
-        this.beLongRepository = beLongRepository;
+            DatabaseRepository databaseRepository,
+            RelationshipService relationshipService) {
         this.tableRepository = tableRepository;
         this.schemaRepository = schemaRepository;
         this.databaseRepository = databaseRepository;
+        this.relationshipService = relationshipService;
     }
 
     @Override
     public void createNodeOfRelRel(List<BaseNodeEntity> starts, BaseNodeEntity end) {
-
     }
 
     @Override
     public void createSchemaOfDatabaseRel(List<SchemaEntity> schemas, DatabaseEntity database) {
-        List<OfRelationship> list = schemas.stream()
-                .map(schema -> OfRelationship.builder().start(schema).end(database).build())
-                .collect(Collectors.toList());
-        beLongRepository.saveAll(list);
+        final List<String> endList = schemas.stream().map(SchemaEntity::getGraphId).collect(Collectors.toList());
+        relationshipService.nodeRelNodes(NeoConstant.Graph.NODE_DATABASE,
+                database.getGraphId(),
+                NeoConstant.Graph.NODE_SCHEMA,
+                endList,
+                NeoConstant.Graph.REL_OF,
+                Collections.emptyMap()
+        );
     }
 
     @Override
     public void createTableOfDatabaseRel(List<TableEntity> tables, DatabaseEntity database) {
-        List<OfRelationship> list = tables.stream()
-                .map(table -> OfRelationship.builder().start(table).end(database).build())
-                .collect(Collectors.toList());
-        beLongRepository.saveAll(list);
+        final List<String> endList = tables.stream().map(TableEntity::getGraphId).collect(Collectors.toList());
+        relationshipService.nodeRelNodes(NeoConstant.Graph.NODE_DATABASE,
+                database.getGraphId(),
+                NeoConstant.Graph.NODE_TABLE,
+                endList,
+                NeoConstant.Graph.REL_OF,
+                Collections.emptyMap()
+        );
     }
 
     @Override
@@ -71,10 +82,14 @@ public class OfRelServiceImpl implements OfRelService {
 
     @Override
     public void createTableOfSchemaRel(List<TableEntity> tables, SchemaEntity schema) {
-        List<OfRelationship> list = tables.stream()
-                .map(table -> OfRelationship.builder().start(table).end(schema).build())
-                .collect(Collectors.toList());
-        beLongRepository.saveAll(list);
+        final List<String> endList = tables.stream().map(TableEntity::getGraphId).collect(Collectors.toList());
+        relationshipService.nodeRelNodes(NeoConstant.Graph.NODE_SCHEMA,
+                schema.getGraphId(),
+                NeoConstant.Graph.NODE_TABLE,
+                endList,
+                NeoConstant.Graph.REL_OF,
+                Collections.emptyMap()
+        );
     }
 
     @Override
@@ -89,10 +104,14 @@ public class OfRelServiceImpl implements OfRelService {
 
     @Override
     public void createFieldOfTableRel(List<FieldEntity> fields, TableEntity table) {
-        List<OfRelationship> list = fields.stream()
-                .map(field -> OfRelationship.builder().start(field).end(table).build())
-                .collect(Collectors.toList());
-        beLongRepository.saveAll(list);
+        final List<String> endList = fields.stream().map(FieldEntity::getGraphId).collect(Collectors.toList());
+        relationshipService.nodeRelNodes(NeoConstant.Graph.NODE_TABLE,
+                table.getGraphId(),
+                NeoConstant.Graph.NODE_FIELD,
+                endList,
+                NeoConstant.Graph.REL_OF,
+                Collections.emptyMap()
+        );
     }
 
     @Override

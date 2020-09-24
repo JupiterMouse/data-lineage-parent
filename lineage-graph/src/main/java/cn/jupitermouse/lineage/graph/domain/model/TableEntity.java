@@ -6,7 +6,7 @@ import cn.jupitermouse.lineage.graph.infra.constats.NeoConstant;
 import lombok.*;
 import org.apache.commons.lang3.StringUtils;
 import org.neo4j.ogm.annotation.NodeEntity;
-import org.neo4j.ogm.annotation.Relationship;
+import org.neo4j.ogm.annotation.Transient;
 
 /**
  * <p>
@@ -36,10 +36,6 @@ public class TableEntity extends BaseNodeEntity {
      * table名
      */
     private String table;
-    /**
-     * 是否为视图 1 视图，0 为表
-     */
-    private Integer viewFlag;
 
     public TableEntity(String clusterName, String database, String schema, String table) {
         setClusterName(clusterName);
@@ -58,11 +54,8 @@ public class TableEntity extends BaseNodeEntity {
         setGraphId(this.generateId());
     }
 
-    @Relationship(type = NeoConstant.Graph.REL_OF, direction = Relationship.INCOMING)
+    @Transient
     private List<FieldEntity> fieldOfTableList;
-
-    @Relationship(type = NeoConstant.Graph.REL_FROM, direction = Relationship.DIRECTION)
-    private List<TableEntity> fromTableList;
 
     @Override
     protected boolean valid() {
@@ -90,5 +83,10 @@ public class TableEntity extends BaseNodeEntity {
 
     public void setGraphId() {
         this.setGraphId(this.generateId());
+    }
+
+    public void setTable(String table) {
+        this.table = table;
+        this.setName(this.table);
     }
 }

@@ -20,7 +20,7 @@ public abstract class BaseNodeEntity extends BaseEntity {
     private String graphId;
 
     /**
-     * 在图数据库中每个节点展示的名字
+     * 展示的名称
      */
     private String name;
 
@@ -37,7 +37,18 @@ public abstract class BaseNodeEntity extends BaseEntity {
      */
     private String datasourceCode;
 
+    /**
+     * 集群代码
+     */
     private String clusterName;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public String getGraphId() {
         return graphId;
@@ -72,13 +83,6 @@ public abstract class BaseNodeEntity extends BaseEntity {
         this.clusterName = clusterName;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
 
     public Long getTenantId() {
         return tenantId;

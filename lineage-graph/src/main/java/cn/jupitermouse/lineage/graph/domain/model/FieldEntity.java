@@ -5,7 +5,7 @@ import java.util.List;
 import cn.jupitermouse.lineage.graph.infra.constats.NeoConstant;
 import lombok.*;
 import org.neo4j.ogm.annotation.NodeEntity;
-import org.neo4j.ogm.annotation.Relationship;
+import org.neo4j.ogm.annotation.Transient;
 
 /**
  * <p>
@@ -40,12 +40,7 @@ public class FieldEntity extends BaseNodeEntity {
      */
     private String field;
 
-    /**
-     * 是否为分区字段
-     */
-    private Integer partitionFlag;
-
-    @Relationship(type = NeoConstant.Graph.REL_FROM, direction = Relationship.DIRECTION)
+    @Transient
     private List<FieldEntity> fromFieldList;
 
     public FieldEntity(String clusterName, String database, String schema, String table, String field) {
@@ -91,4 +86,8 @@ public class FieldEntity extends BaseNodeEntity {
     }
 
 
+    public void setField(String field) {
+        this.field = field;
+        this.setName(this.field);
+    }
 }

@@ -12,7 +12,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import cn.jupitermouse.lineage.graph.domain.model.FieldEntity;
 import cn.jupitermouse.lineage.graph.domain.model.TableEntity;
 import cn.jupitermouse.lineage.graph.domain.repository.FieldRepository;
-import cn.jupitermouse.lineage.graph.domain.repository.FromRelationshipRepository;
 import cn.jupitermouse.lineage.graph.infra.constats.NeoConstant;
 import cn.jupitermouse.lineage.graph.service.FromRelService;
 import cn.jupitermouse.lineage.graph.service.OfRelService;
@@ -40,9 +39,6 @@ public class NodeGeneractorTest {
     private FieldRepository fieldRepository;
 
     @Autowired
-    private FromRelationshipRepository fromRelationshipRepository;
-
-    @Autowired
     private FromRelService fromRelService;
 
     @Autowired
@@ -55,9 +51,7 @@ public class NodeGeneractorTest {
                 .schema("hzero_iam")
                 .table("iam_user")
                 .field("id")
-                .partitionFlag(0)
                 .build();
-        fieldEntity.setName("id");
         fieldEntity.setGraphId();
 
         Map<String, String> map = new HashMap<>();
@@ -68,12 +62,9 @@ public class NodeGeneractorTest {
                 .database("hdsp")
                 .schema("hzero_iam")
                 .table("iam_user")
-                .viewFlag(0)
                 .build();
-        tableEntity.setName("iam_user");
         tableEntity.setGraphId();
         ofRelService.createFieldOfTableRel(Collections.singletonList(fieldEntity), tableEntity);
-        System.out.println();
     }
 
 

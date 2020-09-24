@@ -90,7 +90,6 @@ public interface OfRelService {
      * @param fields 从节点列表
      * @param table  目标节点
      */
-    @Deprecated
     void createFieldOfTableRel(List<FieldEntity> fields, TableEntity table);
 
     /**

@@ -11,6 +11,8 @@ import org.springframework.util.StringUtils;
 import cn.jupitermouse.lineage.graph.domain.model.FieldEntity;
 import cn.jupitermouse.lineage.graph.domain.model.SchemaEntity;
 import cn.jupitermouse.lineage.graph.domain.model.TableEntity;
+import cn.jupitermouse.lineage.graph.domain.repository.FieldRepository;
+import cn.jupitermouse.lineage.graph.domain.repository.SchemaRepository;
 import cn.jupitermouse.lineage.graph.domain.repository.TableRepository;
 import cn.jupitermouse.lineage.graph.service.OfRelService;
 import cn.jupitermouse.lineage.metadata.ingest.infra.config.DataSourceHolder;
@@ -30,12 +32,17 @@ public class ModelIngestServiceImpl implements ModelIngestService {
 
     private final OfRelService ofRelService;
     private final TableRepository tableRepository;
-
+    private final SchemaRepository schemaRepository;
+    private final FieldRepository fieldRepository;
 
     public ModelIngestServiceImpl(OfRelService ofRelService,
-            TableRepository tableRepository) {
+            TableRepository tableRepository,
+            SchemaRepository schemaRepository,
+            FieldRepository fieldRepository) {
         this.ofRelService = ofRelService;
         this.tableRepository = tableRepository;
+        this.schemaRepository = schemaRepository;
+        this.fieldRepository = fieldRepository;
     }
 
     @Override
@@ -64,7 +71,12 @@ public class ModelIngestServiceImpl implements ModelIngestService {
             schemaEntity.setTableOfSchemaList(tableEntities);
             schemaEntityList.add(schemaEntity);
         }
+        // 节点信息
         ofRelService.createTableOfSchemaRelList(schemaEntityList);
+        schemaEntityList.forEach(schemaEntity -> tableRepository.saveAll(schemaEntity.getTableOfSchemaList()));
+        // 关系建立
+        schemaEntityList.forEach(schemaEntity -> this.ofRelService
+                .createTableOfSchemaRel(schemaEntity.getTableOfSchemaList(), schemaEntity));
     }
 
     @Override
@@ -96,11 +108,16 @@ public class ModelIngestServiceImpl implements ModelIngestService {
             final List<FieldEntity> fieldEntityList = fieldInfoMap.stream()
                     .map(m -> this.mapConvertFieldEntity(cluster, finalCatalog1, finalSchema, tableName, m))
                     .collect(Collectors.toList());
-
             tableEntity.setFieldOfTableList(fieldEntityList);
             tableEntityList.add(tableEntity);
         }
         ofRelService.createFieldOfTableRelList(tableEntityList);
+        final List<FieldEntity> fieldEntities = tableEntityList.stream()
+                .flatMap(tableEntity -> tableEntity.getFieldOfTableList().stream())
+                .collect(Collectors.toList());
+        fieldRepository.saveAll(fieldEntities);
+        tableEntityList.forEach(
+                tableEntity -> this.ofRelService.createFieldOfTableRel(tableEntity.getFieldOfTableList(), tableEntity));
 
     }
 
@@ -110,11 +127,8 @@ public class ModelIngestServiceImpl implements ModelIngestService {
         schemaEntity.setDatabase(catalog);
         Optional.ofNullable(map.get("TABLE_SCHEM")).ifPresent(s -> {
             schemaEntity.setSchema((String) s);
-            schemaEntity.setName((String) s);
         });
-        schemaEntity.setLastUpdateDate(new Date());
         schemaEntity.setGraphId();
-        schemaEntity.setName(schemaEntity.getSchema());
         return schemaEntity;
     }
 
@@ -130,16 +144,14 @@ public class ModelIngestServiceImpl implements ModelIngestService {
         Optional.ofNullable(map.get("REMARKS")).ifPresent(v -> attrs.put("remarks", v.toString()));
         Optional.ofNullable(map.get("TABLE_TYPE")).ifPresent(v -> attrs.put("table_type", v.toString()));
         tableEntity.setAttrs(attrs);
-        tableEntity.setLastUpdateDate(new Date());
         tableEntity.setGraphId();
-        tableEntity.setName(tableEntity.getTable());
 
         Object tableType = map.get("TABLE_TYPE");
 
         if ("VIEW".equals(tableType)) {
-            tableEntity.setViewFlag(1);
+            attrs.put("viewFlag", "1");
         } else {
-            tableEntity.setViewFlag(0);
+            attrs.put("viewFlag", "2");
         }
         return tableEntity;
     }
@@ -160,11 +172,8 @@ public class ModelIngestServiceImpl implements ModelIngestService {
         Optional.ofNullable(map.get("COLUMN_DEF")).ifPresent(v -> attrs.put("remark", v.toString()));
 
         fieldEntity.setAttrs(attrs);
-        fieldEntity.setLastUpdateDate(new Date());
         fieldEntity.setGraphId();
-        fieldEntity.setName(fieldEntity.getField());
 
-        // TODO  判断是否为视图
         return fieldEntity;
     }
 
