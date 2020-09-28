@@ -14,9 +14,6 @@ import org.neo4j.ogm.annotation.NodeEntity;
  */
 @EqualsAndHashCode(callSuper = false)
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 @NodeEntity(label = NeoConstant.Graph.NODE_CLUSTER)
 public class ClusterEntity extends BaseNodeEntity{
 }

@@ -2,6 +2,7 @@ package cn.jupitermouse.lineage.graph.domain.model;
 
 
 import org.neo4j.ogm.annotation.Id;
+import org.neo4j.ogm.annotation.Index;
 
 /**
  * <p>
@@ -17,6 +18,7 @@ public abstract class BaseNodeEntity extends BaseEntity {
      * 节点Id 组合索引
      */
     @Id
+    @Index(unique = true)
     private String graphId;
 
     /**
