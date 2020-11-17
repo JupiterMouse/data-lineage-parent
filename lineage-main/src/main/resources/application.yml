@@ -40,7 +40,7 @@ spring:
 lineage:
   datasource:
     0_gp:
-      jdbc-url: jdbc:postgresql://172.23.16.68:5432/test
-      username: hdsp
-      password: hdsp
+      jdbc-url: jdbc:postgresql://127.0.0.1:5432/test
+      username: xxx
+      password: xxx
       driver-class-name: org.postgresql.Driver
