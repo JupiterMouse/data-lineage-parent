@@ -10,10 +10,11 @@ spring:
     neo4j:
       username: neo4j
       password: 123456 # 如果没有修改，默认密码为 neo4j
-      uri: bolt://172.23.16.68:7687 # BOLT IPhttp://172.23.16.68:7474/
+      uri: bolt://127.0.0.1:7687 # BOLT IPhttp://172.23.16.68:7474/
+      auto-index: update
 
   kafka:
-    bootstrap-servers: 10.37.129.2:9092
+    bootstrap-servers: 192.168.0.104:9092
     producer:
       retries: 0
       batch-size: 16384
@@ -36,13 +37,10 @@ spring:
       ack-mode: manual_immediate
       missing-topics-fatal: false
 
-
-
-
 lineage:
   datasource:
-    hand-hr-gp:
-      jdbc-url: jdbc:postgresql://172.23.16.68:5432/hand
+    0_gp:
+      jdbc-url: jdbc:postgresql://172.23.16.68:5432/test
       username: hdsp
       password: hdsp
       driver-class-name: org.postgresql.Driver
